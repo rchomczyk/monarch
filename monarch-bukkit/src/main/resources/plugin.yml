@@ -1,0 +1,5 @@
+main: moe.rafal.monarch.bukkit.MonarchBukkitPlugin
+name: monarch
+version: ${project.version}
+authors: ["shitzuu <hello@rafal.moe>"]
+api-version: 1.19
