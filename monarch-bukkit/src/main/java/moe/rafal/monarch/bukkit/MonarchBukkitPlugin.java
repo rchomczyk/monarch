@@ -74,7 +74,7 @@ public class MonarchBukkitPlugin extends JavaPlugin {
             .redirectResult(RequiredPermissions.class, LiteTranslatableMessage.class, permissions ->
                 translation("command.access.violation", new Placeholder("permissions", String.join(", ", permissions.getPermissions()))))
             .resultHandler (LiteTranslatableMessage.class, new BukkitMessageHandler(linguist, languageIndex, userService))
-            .commandInstance(new LanguageCommand(userService))
+            .commandInstance(new LanguageCommand(languageIndex, userService))
             .register();
     }
 
