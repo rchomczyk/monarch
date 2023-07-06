@@ -67,7 +67,7 @@ public class LanguageCommand {
             })
             .whenComplete((result, throwable) -> {
                 if (throwable == null) {
-                    languageEventPublisher.publishAndForget(new LanguageChangeEvent(user.getUuid(), languageChangedFrom, languageChangedInto));
+                    languageEventPublisher.fireAndForget(new LanguageChangeEvent(user.getUuid(), languageChangedFrom, languageChangedInto));
                 }
             });
     }

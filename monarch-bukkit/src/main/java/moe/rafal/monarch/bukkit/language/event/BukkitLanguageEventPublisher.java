@@ -12,9 +12,15 @@ class BukkitLanguageEventPublisher implements LanguageEventPublisher {
     }
 
     @Override
-    public <T extends LanguageEvent> T publishAndForget(T event) {
-        PluginManager pluginManager = plugin.getServer().getPluginManager();
-        pluginManager.callEvent(event);
+    public <T extends LanguageEvent> T fireAndForget(T event) {
+        runTaskSynchronously(() -> {
+            PluginManager pluginManager = plugin.getServer().getPluginManager();
+            pluginManager.callEvent(event);
+        });
         return event;
+    }
+
+    private void runTaskSynchronously(Runnable task) {
+        plugin.getServer().getScheduler().runTask(plugin, task);
     }
 }
