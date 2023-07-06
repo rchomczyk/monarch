@@ -29,6 +29,12 @@
     <dependencies>
         <dependency>
             <groupId>moe.rafal</groupId>
+            <artifactId>monarch-public-bukkit</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>moe.rafal</groupId>
             <artifactId>monarch-core</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>

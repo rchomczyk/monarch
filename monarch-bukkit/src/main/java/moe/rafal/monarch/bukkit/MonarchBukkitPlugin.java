@@ -9,6 +9,8 @@ import moe.rafal.linguist.integration.litecommands.LiteTranslatableMessage;
 import moe.rafal.linguist.placeholder.Placeholder;
 import moe.rafal.monarch.MonarchFacade;
 import moe.rafal.monarch.MonarchFacadeImpl;
+import moe.rafal.monarch.bukkit.language.event.BukkitLanguageEventPublisherFactory;
+import moe.rafal.monarch.bukkit.language.event.LanguageEventPublisher;
 import moe.rafal.monarch.bukkit.message.BukkitMessageHandler;
 import moe.rafal.monarch.config.ConfigFactory;
 import moe.rafal.monarch.config.PluginConfig;
@@ -55,6 +57,7 @@ public class MonarchBukkitPlugin extends JavaPlugin {
         languageRepository.createSchema();
         LanguageService languageService = new LanguageService(languageRepository, languageIndex);
         languageService.indexLanguages(linguist.supportedLocales());
+        LanguageEventPublisher languageEventPublisher = BukkitLanguageEventPublisherFactory.createLanguageEventPublisher(this);
 
         UserRepository userRepository = UserRepositoryFactory.createUserRepository(datasource);
         userRepository.createSchema();
@@ -74,7 +77,7 @@ public class MonarchBukkitPlugin extends JavaPlugin {
             .redirectResult(RequiredPermissions.class, LiteTranslatableMessage.class, permissions ->
                 translation("command.access.violation", new Placeholder("permissions", String.join(", ", permissions.getPermissions()))))
             .resultHandler (LiteTranslatableMessage.class, new BukkitMessageHandler(linguist, languageIndex, userService))
-            .commandInstance(new LanguageCommand(languageIndex, userService))
+            .commandInstance(new LanguageCommand(languageIndex, languageEventPublisher, userService))
             .register();
     }
 

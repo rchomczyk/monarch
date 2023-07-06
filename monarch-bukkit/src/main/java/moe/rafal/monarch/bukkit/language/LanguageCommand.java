@@ -6,6 +6,8 @@ import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.route.Route;
 import moe.rafal.linguist.integration.litecommands.LiteTranslatableMessage;
 import moe.rafal.linguist.placeholder.Placeholder;
+import moe.rafal.monarch.bukkit.language.event.LanguageChangeEvent;
+import moe.rafal.monarch.bukkit.language.event.LanguageEventPublisher;
 import moe.rafal.monarch.language.Language;
 import moe.rafal.monarch.language.index.LanguageIndex;
 import moe.rafal.monarch.user.User;
@@ -21,10 +23,12 @@ import static moe.rafal.monarch.bukkit.message.BukkitMessageFactory.translation;
 public class LanguageCommand {
 
     private final LanguageIndex languageIndex;
+    private final LanguageEventPublisher languageEventPublisher;
     private final UserService userService;
 
-    public LanguageCommand(LanguageIndex languageIndex, UserService userService) {
+    public LanguageCommand(LanguageIndex languageIndex, LanguageEventPublisher languageEventPublisher, UserService userService) {
         this.languageIndex = languageIndex;
+        this.languageEventPublisher = languageEventPublisher;
         this.userService = userService;
     }
 
@@ -51,12 +55,20 @@ public class LanguageCommand {
     }
 
     private CompletableFuture<LiteTranslatableMessage> setLanguage(User user, Language language) {
+        Language languageChangedFrom = languageIndex.getByKey(user.getLanguageId());
+        Language languageChangedInto = languageIndex.getByKey(language.id());
+
         user.setLanguageId(language.id());
         return userService.saveUser(user)
             .thenApply(__ -> translation("command.language.set.success", new Placeholder("language_tag", language.tag())))
             .exceptionally(exception -> {
                 exception.printStackTrace();
                 return translation("command.language.set.failure");
+            })
+            .whenComplete((result, throwable) -> {
+                if (throwable == null) {
+                    languageEventPublisher.publishAndForget(new LanguageChangeEvent(user.getUuid(), languageChangedFrom, languageChangedInto));
+                }
             });
     }
 }
