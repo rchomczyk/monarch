@@ -13,6 +13,7 @@
         <module>monarch-bukkit</module>
         <module>monarch-core</module>
         <module>monarch-public-bukkit</module>
+        <module>monarch-integrations</module>
     </modules>
 
     <properties>
